@@ -4,8 +4,11 @@ project(sparse_bundle_adjustment)
 find_package(catkin REQUIRED
   COMPONENTS
     cmake_modules
+    suitesparse
 )
 find_package(Eigen REQUIRED)
+
+set(SUITESPARSE_INCLUDE_DEST ${CATKIN_DEVEL_PREFIX}/include/suitesparse)
 
 include_directories(${catkin_INCLUDE_DIRS} ${EIGEN_INCLUDE_DIRS})
 add_definitions(${EIGEN_DEFINITIONS})
@@ -13,7 +16,7 @@ add_definitions(${EIGEN_DEFINITIONS})
 INCLUDE_DIRECTORIES(include)
 
 catkin_package(
-  INCLUDE_DIRS include
+  INCLUDE_DIRS include ${SUITESPARSE_INCLUDE_DEST}
   LIBRARIES sba
 )
 
@@ -22,7 +25,7 @@ add_definitions(-DSBA_CHOLMOD)
 # SBA library
 add_library(sba src/sba.cpp src/spa.cpp src/spa2d.cpp src/csparse.cpp src/proj.cpp src/node.cpp src/sba_file_io.cpp)
 #rosbuild_add_compile_flags(sba ${SSE_FLAGS})
-target_link_libraries(sba blas lapack cholmod cxsparse)
+target_link_libraries(sba blas lapack suitesparse)
 
 install(DIRECTORY include/sparse_bundle_adjustment/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
